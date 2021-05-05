@@ -30,16 +30,12 @@ spec:
       initContainers:
         - name: copy-ro-config
           image: busybox
-          command: ['sh', '-c', 'cp /dro/* /drw/']
+          command: ['sh', '-c', 'cp /ro/* /rw/']
           volumeMounts:
-#            - name: server-xml-rw
-#              mountPath: /rw
-#            - name: server-xml-ro
-#              mountPath: /ro
             - name: dhis-conf-rw
-              mountPath: /drw
+              mountPath: /rw
             - name: dhis-conf-ro
-              mountPath: /dro
+              mountPath: /ro
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -61,23 +57,12 @@ spec:
               path: /
               port: http
           volumeMounts:
-#            - name: server-xml-rw
-#              mountPath: /usr/local/tomcat/conf
-#              readOnly: false
             - name: dhis-conf-rw
               mountPath: /DHIS2_home
               readOnly: false
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-#        - name: server-xml-rw
-#          emptyDir: {}
-#        - name: server-xml-ro
-#          configMap:
-#            name: {{ include "dhis2-core-helm.fullname" . }}
-#            items:
-#              - key: server.xml
-#                path: server.xml
         - name: dhis-conf-rw
           emptyDir: {}
         - name: dhis-conf-ro

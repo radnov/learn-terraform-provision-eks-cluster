@@ -1,7 +1,7 @@
 releases:
-#  - name: ingress-nginx
-#    namespace: ingress
-#    chart: ingress-nginx/ingress-nginx
+  - name: ingress-nginx
+    namespace: ingress
+    chart: ingress-nginx/ingress-nginx
 
   - name: dhis2-core
     namespace: dhis2-core
@@ -10,11 +10,11 @@ releases:
       - ingress:
           enabled: true
           hosts:
-            - host: dhis2-212.60.124.19.nip.io
+            - host: dhis2-{{ requiredEnv "LB_IP" }}.nip.io
               paths:
                 - path: /
                   backend:
-                    serviceName: dhis2-212.60.124.19.nip.io
+                    serviceName: dhis2-{{ requiredEnv "LB_IP" }}.nip.io
                     servicePort: 8080
 
   - name: dhis2-core-database
@@ -24,6 +24,8 @@ releases:
     values:
       - image:
           tag: 10
+      - global:
+          storageClass: gp2
       - postgresqlUsername: dhis
         postgresqlPassword: dhis
         postgresqlDatabase: dhis2
@@ -40,16 +42,16 @@ releases:
 #      - ingress:
 #          enabled: true
 #          hostname: whoami-mn-52.220.47.228.nip.io
-#
-#  - name: whoami-go
-#    namespace: whoami
-#    chart: tons/whoami-go
-#    verify: true
-#    values:
-#      - replicaCount: 2
-#      - ingress:
-#          enabled: true
-#          hostname: whoami-go-52.220.47.228.nip.io
+
+  - name: whoami-go
+    namespace: whoami
+    chart: tons/whoami-go
+    verify: true
+    values:
+      - replicaCount: 2
+      - ingress:
+          enabled: true
+          hostname: whoami-go-{{ requiredEnv "LB_IP" }}.nip.io
 
 repositories:
   - name: ingress-nginx

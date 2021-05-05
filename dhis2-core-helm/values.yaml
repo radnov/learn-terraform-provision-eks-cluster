@@ -2,7 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-#tomcatServerConfig: includes/server.xml
 dhisConfig: includes/DHIS2_home/dhis.conf
 
 replicaCount: 1
