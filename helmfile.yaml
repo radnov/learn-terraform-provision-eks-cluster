@@ -24,6 +24,7 @@ releases:
     values:
       - image:
           tag: 10
+      # TODO: Don't do this, set default storage class... Somewhere
       - global:
           storageClass: gp2
       - postgresqlUsername: dhis
