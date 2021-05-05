@@ -1,10 +1,10 @@
-
 # Configuration
 ## Cluster
 ```bash
-terraform apply -auto-approve
+time terraform apply -auto-approve
 terraform output -raw kubectl_config > ~/.kube/dhis.yaml
 export KUBECONFIG="$HOME/.kube/dhis.yaml"
+kubectl get nodes
 ```
 
 ## Ingress Controller
@@ -12,6 +12,7 @@ export KUBECONFIG="$HOME/.kube/dhis.yaml"
 LB_IP="-" helmfile --selector name=ingress-nginx sync
 export LB_HOSTNAME=$(kubectl --namespace ingress get services ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 export LB_IP=$(dig $LB_HOSTNAME +short | head -n 1)
+echo "LB: $LB_IP"
 ```
 
 ## WhoAmI Application
