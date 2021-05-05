@@ -22,6 +22,18 @@ releases:
     chart: bitnami/postgresql
     verify: false
     values:
+      - extraEnv:
+          - name: SEED_URL
+            # TODO: requiredEnv "SEED_URL" ... Or from value?
+            value: 2.36/dhis2-db-sierra-leone.sql.gz
+      - initdbScripts:
+          seed.sh: |
+            #!/usr/bin/env bash
+            ABSOLUTE_SEED_URL="https://databases.dhis2.org/sierra-leone/$SEED_URL"
+            curl -o /tmp/z.$$ $ABSOLUTE_SEED_URL
+            gunzip -c /tmp/z.$$ > /tmp/dhis2-db-sierra-leone.sql
+            psql -U postgres -d dhis2 -p 5432 -f /tmp/dhis2-db-sierra-leone.sql
+            rm /tmp/dhis2-db-sierra-leone.sql
       - image:
           tag: 10
       # TODO: Don't do this, set default storage class... Somewhere
