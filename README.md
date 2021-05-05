@@ -9,7 +9,7 @@ export KUBECONFIG="$HOME/.kube/dhis.yaml"
 
 ## Ingress Controller
 ```bash
-LB_IP="" helmfile --selector name=ingress-nginx sync
+LB_IP="-" helmfile --selector name=ingress-nginx sync
 export LB_HOSTNAME=$(kubectl --namespace ingress get services ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 export LB_IP=$(dig $LB_HOSTNAME +short | head -n 1)
 ```
