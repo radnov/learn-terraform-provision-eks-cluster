@@ -58,3 +58,5 @@ repositories:
     url: https://kubernetes.github.io/ingress-nginx
   - name: tons
     url: https://helm-charts.fitfit.dk
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
