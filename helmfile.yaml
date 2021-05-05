@@ -1,0 +1,58 @@
+releases:
+#  - name: ingress-nginx
+#    namespace: ingress
+#    chart: ingress-nginx/ingress-nginx
+
+  - name: dhis2-core
+    namespace: dhis2-core
+    chart: ./dhis2-core-helm/
+    values:
+      - ingress:
+          enabled: true
+          hosts:
+            - host: dhis2-212.60.124.19.nip.io
+              paths:
+                - path: /
+                  backend:
+                    serviceName: dhis2-212.60.124.19.nip.io
+                    servicePort: 8080
+
+  - name: dhis2-core-database
+    namespace: dhis2-core
+    chart: bitnami/postgresql
+    verify: false
+    values:
+      - image:
+          tag: 10
+      - postgresqlUsername: dhis
+        postgresqlPassword: dhis
+        postgresqlDatabase: dhis2
+        persistence:
+          size: 1024M
+          storageClass: local-path
+
+#  - name: whoami-mn
+#    namespace: whoami
+#    chart: tons/whoami-mn
+#    verify: true
+#    values:
+#      - replicaCount: 2
+#      - ingress:
+#          enabled: true
+#          hostname: whoami-mn-52.220.47.228.nip.io
+#
+#  - name: whoami-go
+#    namespace: whoami
+#    chart: tons/whoami-go
+#    verify: true
+#    values:
+#      - replicaCount: 2
+#      - ingress:
+#          enabled: true
+#          hostname: whoami-go-52.220.47.228.nip.io
+
+repositories:
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+  - name: tons
+    url: https://helm-charts.fitfit.dk
