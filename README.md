@@ -29,7 +29,10 @@ kubectl run dhis2-core-database-postgresql-client --rm --tty -i --restart='Never
 
 ## DHIS2 Application
 ```bash
-helmfile --selector name=dhis2-core sync
+
+# Teardown
+```bash
+terraform destroy -auto-approve
 ```
 
 # TODO

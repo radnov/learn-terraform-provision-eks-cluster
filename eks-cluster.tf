@@ -36,6 +36,36 @@ module "eks" {
   ]
 }
 
+// TODO: This creates a dependency on our stack... But isn't there already a tight coupling between the cluster and the cluster stack?
+resource "aws_security_group" "dummy" {
+  name_prefix = "Dummy resource used by terraform to uninstall the nginx-ingress chart"
+  vpc_id = module.vpc.vpc_id
+
+  depends_on = [
+    module.eks,
+  ]
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "cd stacks/cluster && helmfile --selector name=ingress-nginx destroy"
+  }
+}
+
+/* TODO: Bug! Should be reported... https://github.com/hashicorp/terraform-provider-random/issues
+resource "random_string" "dummy" {
+  length = 0
+
+  depends_on = [
+    module.eks,
+  ]
+
+  provisioner "local-exec" {
+    when = destroy
+    command = "helmfile --selector name=ingress-nginx destroy"
+  }
+}
+*/
+
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
