@@ -9,7 +9,18 @@ kubectl get nodes
 
 ## Ingress Controller
 ```bash
+cd stacks/cluster
 LB_IP="-" helmfile --selector name=ingress-nginx sync
+cd -
+```
+
+Wait until the load balancer ip is assigned
+```bash
+kubectl --namespace ingress get services ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"
+```
+
+Retrieve IP
+```bash
 export LB_HOSTNAME=$(kubectl --namespace ingress get services ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 export LB_IP=$(dig $LB_HOSTNAME +short | head -n 1)
 echo "LB: $LB_IP"
@@ -17,18 +28,37 @@ echo "LB: $LB_IP"
 
 ## WhoAmI Application
 ```bash
+cd stacks/application
 helmfile --selector name=whoami-go sync
+cd -
+
+http http://whoami-go-$LB_IP.nip.io
 ```
 
 ## DHIS2 Database
 ```bash
+cd stacks/application
 helmfile --selector name=dhis2-core-database sync
+cd -
+```
+
+Tail database logs
+```bash
+kubectl logs --namespace dhis2-core dhis2-core-database-postgresql-0 -f
+```
+
+Configure Post GIS extension
+```bash
 export POSTGRES_ADMIN_PASSWORD=$(kubectl get secret --namespace dhis2-core dhis2-core-database-postgresql -o jsonpath="{.data.postgresql-postgres-password}" | base64 --decode)
 kubectl run dhis2-core-database-postgresql-client --rm --tty -i --restart='Never' --namespace dhis2-core --image docker.io/bitnami/postgresql:10 --env="PGPASSWORD=$POSTGRES_ADMIN_PASSWORD" --command -- /bin/sh -c 'echo "create extension postgis; \dx;" | psql --host dhis2-core-database-postgresql -U postgres -d dhis2 -p 5432'
 ```
 
 ## DHIS2 Application
 ```bash
+cd stacks/application
+helmfile --selector name=dhis2-core sync
+cd -
+```
 
 # Teardown
 ```bash

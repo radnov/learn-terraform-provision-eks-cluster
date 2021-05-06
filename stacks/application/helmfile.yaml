@@ -1,8 +1,4 @@
 releases:
-  - name: ingress-nginx
-    namespace: ingress
-    chart: ingress-nginx/ingress-nginx
-
   - name: dhis2-core
     namespace: dhis2-core
     chart: ./dhis2-core-helm/
@@ -67,9 +63,7 @@ releases:
           hostname: whoami-go-{{ requiredEnv "LB_IP" }}.nip.io
 
 repositories:
-  - name: ingress-nginx
-    url: https://kubernetes.github.io/ingress-nginx
-  - name: tons
-    url: https://helm-charts.fitfit.dk
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
+  - name: tons
+    url: https://helm-charts.fitfit.dk
