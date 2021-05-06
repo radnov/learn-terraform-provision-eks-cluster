@@ -43,7 +43,7 @@ releases:
         postgresqlPassword: dhis
         postgresqlDatabase: dhis2
         persistence:
-          size: 1024M
+          size: 5Gi
           storageClass: local-path
 
 #  - name: whoami-mn
