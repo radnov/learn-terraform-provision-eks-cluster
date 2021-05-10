@@ -96,7 +96,7 @@ k --kubeconfig ./eks-admin.yaml get pods --namespace default
 ## Ingress Controller
 ```bash
 cd stacks/cluster
-LB_IP="-" helmfile --selector name=ingress-nginx sync
+helmfile --selector name=ingress-nginx sync
 cd -
 ```
 
