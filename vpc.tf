@@ -13,11 +13,6 @@ locals {
   cluster_name = "dhis-poc"
 }
 
-resource "random_string" "suffix" {
-  length = 8
-  special = false
-}
-
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   version = "2.66.0"

@@ -124,7 +124,10 @@ cd -
 
 # Teardown
 ```bash
-terraform destroy -auto-approve
+export GROUP_NAME=(terraform output -raw development-group-name)
+aws iam remove-user-from-group --group-name $GROUP_NAME --user-name rbac
+aws iam list-groups-for-user --user rbac
+time terraform destroy -auto-approve
 ```
 
 # TODO
