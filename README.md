@@ -28,7 +28,7 @@ Create helm chart for the resources found in rbac.yaml
 Apply in each namespace we wish to have
 All done in the cluster stack
 
-### Add user to group
+### Add user to development group
 ```bash
 aws iam list-groups-for-user --user rbac
 export GROUP_NAME=(terraform output -raw development-group-name)
@@ -50,7 +50,8 @@ k apply -n $NAMESPACE -f rbac.yaml
 eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username dev-user
 
 # Group, role and policy is created for admins just like for normal users but the admin role is associated with the group system:masters
-#eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
+export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
+eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
 ```
 
 ### Retrieve kubectl config as a user
@@ -67,6 +68,29 @@ source_profile=dhis-rbac" >> ~/.aws/config
 # Update env.AWS_PROFILE in ./eks.yaml to "dev" ... Or to whatever is defined in ~/.aws/config 
 k --kubeconfig ./eks.yaml get pods --namespace development
 k --kubeconfig ./eks.yaml get pods --namespace default
+```
+
+### Add user to admin group
+```bash
+aws iam list-groups-for-user --user rbac
+export ADMIN_GROUP_NAME=(terraform output -raw admin-group-name)
+aws iam add-user-to-group --group-name $ADMIN_GROUP_NAME --user-name rbac
+aws iam list-groups-for-user --user rbac
+```
+
+### Retrieve kubectl config as admin user
+```bash
+export CLUSTER_NAME=(terraform output -raw cluster_name)
+export REGION=(terraform output -raw region)
+aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME --profile dhis-rbac --kubeconfig ./eks-admin.yaml
+#eksctl utils write-kubeconfig $CLUSTER_NAME --profile dhis-rbac --region $REGION --kubeconfig ./eks-admin.yaml
+
+echo "[profile admin]
+role_arn=$ADMIN_ROLE_ARN
+source_profile=dhis-rbac" >> ~/.aws/config
+
+# Update env.AWS_PROFILE in ./eks.yaml to "admin" ... Or to whatever is defined in ~/.aws/config 
+k --kubeconfig ./eks-admin.yaml get pods --namespace default
 ```
 
 ## Ingress Controller
