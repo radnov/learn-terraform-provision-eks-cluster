@@ -1,3 +1,28 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Configuration](#configuration)
+  - [Cluster](#cluster)
+  - [RBAC](#rbac)
+    - [Inspiration](#inspiration)
+    - [Terraform](#terraform)
+    - [K8s](#k8s)
+    - [AWS to K8s link](#aws-to-k8s-link)
+    - [Add user to development group](#add-user-to-development-group)
+    - [Retrieve kubectl config as a user](#retrieve-kubectl-config-as-a-user)
+    - [Add user to admin group](#add-user-to-admin-group)
+    - [Retrieve kubectl config as admin user](#retrieve-kubectl-config-as-admin-user)
+  - [Ingress Controller](#ingress-controller)
+  - [WhoAmI Application](#whoami-application)
+  - [DHIS2 Database](#dhis2-database)
+  - [DHIS2 Application](#dhis2-application)
+- [Teardown](#teardown)
+- [TODO](#todo)
+- [Learn Terraform - Provision an EKS Cluster](#learn-terraform---provision-an-eks-cluster)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Configuration
 ## Cluster
 ```bash
@@ -28,14 +53,6 @@ Create helm chart for the resources found in rbac.yaml
 Apply in each namespace we wish to have
 All done in the cluster stack
 
-### Add user to development group
-```bash
-aws iam list-groups-for-user --user rbac
-export GROUP_NAME=(terraform output -raw development-group-name)
-aws iam add-user-to-group --group-name $GROUP_NAME --user-name rbac
-aws iam list-groups-for-user --user rbac
-```
-
 ### AWS to K8s link
 ```bash
 export NAMESPACE=development
@@ -52,6 +69,14 @@ eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --usern
 # Group, role and policy is created for admins just like for normal users but the admin role is associated with the group system:masters
 export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
 eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
+```
+
+### Add user to development group
+```bash
+aws iam list-groups-for-user --user rbac
+export GROUP_NAME=(terraform output -raw development-group-name)
+aws iam add-user-to-group --group-name $GROUP_NAME --user-name rbac
+aws iam list-groups-for-user --user rbac
 ```
 
 ### Retrieve kubectl config as a user
@@ -156,7 +181,6 @@ time terraform destroy -auto-approve
 
 # TODO
 * Create seed parameter in values.yaml
-* Set default storage class so we don't have specify gp2 on our pvc's
 * Proper DNS handling, I'm merely getting the first ip associated with load balancer hostname... In reality, we should properly do a cname forward
 
 # Learn Terraform - Provision an EKS Cluster
