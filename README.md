@@ -8,6 +8,57 @@ export KUBECONFIG="$HOME/.kube/dhis.yaml"
 kubectl get nodes
 ```
 
+## RBAC
+### Inspiration
+* https://www.eksworkshop.com/beginner/091_iam-groups/intro/
+* https://medium.com/swlh/secure-an-amazon-eks-cluster-with-iam-rbac-b78be0cd95c9
+* https://marcincuber.medium.com/amazon-eks-rbac-and-iam-access-f124f1164de7
+
+input: namespaces
+do some for each with list of namespaces from values
+
+### Terraform
+Create module for resources found in rbac.tf
+Invoke for each namespace we wish to have
+
+output: $CLUSTER_NAME, $ROLE_ARN
+
+### K8s
+Create helm chart for the resources found in rbac.yaml
+Apply in each namespace we wish to have
+All done in the cluster stack
+
+### AWS to K8s link
+```bash
+export NAMESPACE=development
+k create namespace $NAMESPACE
+
+export CLUSTER_NAME=(terraform output -raw cluster_name)
+export ROLE_ARN=(terraform output -raw role_arn)
+
+k apply -n $NAMESPACE -f rbac.yaml
+
+eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username dev-user
+
+# Group, role and policy is created for admins just like for normal users but the admin role is associated with the group system:masters
+#eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
+```
+
+### Add user to group
+```bash
+aws iam add-user-to-group --group-name Access-to-the-development-namespace --user-name rbac
+```
+
+### Retrieve kubectl config as a user
+```bash
+export CLUSTER_NAME=(terraform output -raw cluster_name)
+export REGION=(terraform output -raw region)
+aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME --profile dhis-rbac --kubeconfig ./eks.yaml
+# Update env.AWS_PROFILE in ./eks.yaml to "dev"
+k --kubeconfig ./eks.yaml get pods --namespace development
+k --kubeconfig ./eks.yaml get pods --namespace default
+```
+
 ## Ingress Controller
 ```bash
 cd stacks/cluster
