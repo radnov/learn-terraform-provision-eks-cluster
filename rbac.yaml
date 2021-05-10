@@ -39,6 +39,7 @@ metadata:
   name: dev-role-binding
 subjects:
   - kind: User
+# This has to be the same username as used with "eksctl create iamidentitymapping"
     name: dev-user
 roleRef:
   kind: Role

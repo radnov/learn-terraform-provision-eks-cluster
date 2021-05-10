@@ -38,6 +38,7 @@ export ROLE_ARN=(terraform output -raw role_arn)
 
 k apply -n $NAMESPACE -f rbac.yaml
 
+# dev-user has to match the user specified in the RoleBinding
 eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username dev-user
 
 # Group, role and policy is created for admins just like for normal users but the admin role is associated with the group system:masters
