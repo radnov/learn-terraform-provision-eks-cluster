@@ -1,7 +1,7 @@
 releases:
   - name: dhis2-core
     namespace: dhis2-core
-    chart: ./dhis2-core-helm/
+    chart: ../../helm/dhis2-core-helm/
     values:
       - ingress:
           enabled: true
