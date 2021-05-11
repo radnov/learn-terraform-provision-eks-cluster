@@ -3,6 +3,14 @@ releases:
     namespace: ingress
     chart: ingress-nginx/ingress-nginx
 
+  - name: rbac-development
+    namespace: development
+    chart: ../../helm/rbac
+
+  - name: rbac-something
+    namespace: something
+    chart: ../../helm/rbac
+
 repositories:
   - name: ingress-nginx
     url: https://kubernetes.github.io/ingress-nginx

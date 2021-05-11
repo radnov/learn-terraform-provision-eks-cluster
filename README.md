@@ -54,21 +54,16 @@ Apply in each namespace we wish to have
 All done in the cluster stack
 
 ### AWS to K8s link
+#### Namespace: development
 ```bash
 export NAMESPACE=development
-k create namespace $NAMESPACE
-
 export CLUSTER_NAME=(terraform output -raw cluster_name)
+
+cd stacks/cluster && helmfile --selector name=rbac-development sync && cd -
+
 export ROLE_ARN=(terraform output -raw development-role-arn)
-
-k apply -n $NAMESPACE -f rbac.yaml
-
-# dev-user has to match the user specified in the RoleBinding
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username dev-user
-
-# Group, role and policy is created for admins just like for normal users but the admin role is associated with the group system:masters
-export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
+# $NAMESPACE-user has to match the user specified in the RoleBinding
+eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username $NAMESPACE-user
 ```
 
 ### Add user to development group
@@ -79,7 +74,34 @@ aws iam add-user-to-group --group-name $GROUP_NAME --user-name rbac
 aws iam list-groups-for-user --user rbac
 ```
 
-### Retrieve kubectl config as a user
+#### Namespace: something
+```bash
+export NAMESPACE=something
+export CLUSTER_NAME=(terraform output -raw cluster_name)
+
+cd stacks/cluster && helmfile --selector name=rbac-something sync && cd -
+
+export ROLE_ARN=(terraform output -raw something-role-arn)
+# $NAMESPACE-user has to match the user specified in the RoleBinding
+eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username $NAMESPACE-user
+```
+
+### Add user to something group
+```bash
+aws iam list-groups-for-user --user rbac
+export GROUP_NAME=(terraform output -raw something-group-name)
+aws iam add-user-to-group --group-name $GROUP_NAME --user-name rbac
+aws iam list-groups-for-user --user rbac
+```
+
+#### Admin access
+```bash
+# Group, role and policy is created for admins just like for normal users but the admin role is associated with the existing user "admin" and the group "system:masters"
+export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
+eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
+```
+
+### Retrieve kubectl config for development namespace
 ```bash
 export CLUSTER_NAME=(terraform output -raw cluster_name)
 export REGION=(terraform output -raw region)
@@ -173,9 +195,16 @@ cd -
 
 # Teardown
 ```bash
+aws iam list-groups-for-user --user rbac
+
+export GROUP_NAME=(terraform output -raw admin-group-name)
+aws iam remove-user-from-group --group-name $GROUP_NAME --user-name rbac
+
 export GROUP_NAME=(terraform output -raw development-group-name)
 aws iam remove-user-from-group --group-name $GROUP_NAME --user-name rbac
+
 aws iam list-groups-for-user --user rbac
+
 time terraform destroy -auto-approve
 ```
 

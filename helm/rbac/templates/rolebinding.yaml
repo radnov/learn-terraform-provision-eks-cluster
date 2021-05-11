@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "rbac.fullname" . }}
+  labels:
+    {{- include "rbac.labels" . | nindent 4 }}
+subjects:
+  - kind: User
+    # This has to be the same username as used with "eksctl create iamidentitymapping"
+    # TODO: More control from values, use "default" function - See _helpers.tpl as an example
+    name: {{ .Release.Namespace }}-user
+roleRef:
+  kind: Role
+  name: {{ include "rbac.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io

@@ -12,6 +12,8 @@ output "admin-group-name" {
   value = module.rbac-admin.group-name
 }
 
+// ======================================================================
+
 module "rbac-development" {
   source = "./modules/rbac"
   cluster = local.cluster_name
@@ -24,4 +26,20 @@ output "development-role-arn" {
 
 output "development-group-name" {
   value = module.rbac-development.group-name
+}
+
+// ======================================================================
+
+module "rbac-something" {
+  source = "./modules/rbac"
+  cluster = local.cluster_name
+  namespace = "something"
+}
+
+output "something-role-arn" {
+  value = module.rbac-something.role-arn
+}
+
+output "something-group-name" {
+  value = module.rbac-something.group-name
 }
