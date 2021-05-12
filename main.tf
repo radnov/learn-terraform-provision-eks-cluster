@@ -1,4 +1,6 @@
 terraform {
+  required_version = "~> 0.14"
+
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -26,5 +28,13 @@ terraform {
     }
   }
 
-  required_version = "~> 0.14"
+  backend "s3" {
+    bucket = "terraform-eks-poc-infrastructure"
+    key = "state.tfstate"
+    region = "eu-central-1"
+  }
+}
+
+provider "aws" {
+  region = var.region
 }

@@ -1,6 +1,6 @@
 module "rbac-admin" {
   source = "./modules/rbac"
-  cluster = local.cluster_name
+  cluster = var.cluster_name
   namespace = "admin"
 }
 
@@ -16,7 +16,7 @@ output "admin-group-name" {
 
 module "rbac-development" {
   source = "./modules/rbac"
-  cluster = local.cluster_name
+  cluster = var.cluster_name
   namespace = "development"
 }
 
@@ -32,7 +32,7 @@ output "development-group-name" {
 
 module "rbac-something" {
   source = "./modules/rbac"
-  cluster = local.cluster_name
+  cluster = var.cluster_name
   namespace = "something"
 }
 
