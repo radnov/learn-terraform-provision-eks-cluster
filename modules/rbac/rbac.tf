@@ -7,6 +7,7 @@ locals {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 resource "aws_iam_role" "rbac" {
   name = local.name
@@ -54,8 +55,7 @@ resource "aws_iam_group_policy" "cluster" {
         Sid = "AllowEksDescribe"
         Action = "eks:DescribeCluster"
         Effect = "Allow"
-        // TODO: Limit to specific cluster?
-        Resource = "*"
+        Resource = "arn:aws:eks:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/${var.cluster}"
       },
     ]
   })
