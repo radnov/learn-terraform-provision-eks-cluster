@@ -1,10 +1,10 @@
 variable "region" {
-  default = "ap-southeast-1"
+  default = "eu-central-1"
   description = "AWS region"
 }
 
 provider "aws" {
-  region = "ap-southeast-1"
+  region = "eu-central-1"
 }
 
 data "aws_availability_zones" "available" {}
