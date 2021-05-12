@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyAccessToStateForAllButDevOps",
+      "Effect": "Deny",
+      "NotPrincipal": {
+        "AWS": [
+          "arn:aws:iam::767224633206:user/radoslav",
+          "arn:aws:iam::767224633206:user/phil",
+          "arn:aws:iam::767224633206:user/andreas"
+        ]
+      },
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::terraform-eks-poc-infrastructure",
+        "arn:aws:s3:::terraform-eks-poc-infrastructure/*"
+      ]
+    }
+  ]
+}
