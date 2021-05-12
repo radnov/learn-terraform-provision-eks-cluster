@@ -30,7 +30,7 @@
 
 # Cluster
 ```bash
-terraform init
+bash init.sh
 time terraform apply -auto-approve
 terraform output -raw kubectl_config > ~/.kube/dhis.yaml
 export KUBECONFIG="$HOME/.kube/dhis.yaml"
