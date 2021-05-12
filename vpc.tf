@@ -1,17 +1,4 @@
-variable "region" {
-  default = "eu-central-1"
-  description = "AWS region"
-}
-
-provider "aws" {
-  region = "eu-central-1"
-}
-
 data "aws_availability_zones" "available" {}
-
-locals {
-  cluster_name = "dhis-poc"
-}
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -33,16 +20,16 @@ module "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb" = "1"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb" = "1"
   }
 }
