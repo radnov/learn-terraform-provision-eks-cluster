@@ -80,7 +80,7 @@ resource "aws_security_group" "dummy" {
 */
   provisioner "local-exec" {
     when = destroy
-    command = "terraform output -raw kubectl_config > ~/.kube/dhis.yaml && export KUBECONFIG=\"$HOME/.kube/dhis.yaml\" && cd stacks/cluster && helmfile destroy"
+    command = "terraform output -raw kubectl_config > ~/.kube/dhis.yaml && export KUBECONFIG=\"$HOME/.kube/dhis.yaml\" && cd stacks/cluster/ingress && helmfile destroy"
   }
 }
 
