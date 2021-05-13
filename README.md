@@ -7,14 +7,8 @@
   - [Inspiration](#inspiration)
   - [Terraform](#terraform)
   - [K8s](#k8s)
-  - [AWS to K8s link](#aws-to-k8s-link)
-    - [Namespace: development](#namespace-development)
-  - [Add user to development group](#add-user-to-development-group)
-    - [Namespace: something](#namespace-something)
-  - [Add user to something group](#add-user-to-something-group)
-    - [Admin access](#admin-access)
+  - [Apply cluster stack](#apply-cluster-stack)
   - [Retrieve kubectl config for development namespace](#retrieve-kubectl-config-for-development-namespace)
-  - [Add user to admin group](#add-user-to-admin-group)
   - [Retrieve kubectl config as admin user](#retrieve-kubectl-config-as-admin-user)
 - [Ingress Controller](#ingress-controller)
 - [WhoAmI Application](#whoami-application)
@@ -43,72 +37,18 @@ kubectl get nodes
 * https://medium.com/swlh/secure-an-amazon-eks-cluster-with-iam-rbac-b78be0cd95c9
 * https://marcincuber.medium.com/amazon-eks-rbac-and-iam-access-f124f1164de7
 
-input: namespaces
-do some for each with list of namespaces from values
-
-## Terraform
-Create module for resources found in rbac.tf
-Invoke for each namespace we wish to have
-
-output: $CLUSTER_NAME, $ROLE_ARN
-
-## K8s
-Create helm chart for the resources found in rbac.yaml
-Apply in each namespace we wish to have
-All done in the cluster stack
-
-## AWS to K8s link
-### Namespace: development
+## Apply cluster stack
+Install roles and rolebindings to the various namespaces, currently only done for "development"
 ```bash
-export NAMESPACE=development
-export CLUSTER_NAME=(terraform output -raw cluster_name)
-
 cd stacks/cluster && helmfile --selector name=rbac-development sync && cd -
-
-export ROLE_ARN=(terraform output -raw development-role-arn)
-# $NAMESPACE-user has to match the user specified in the RoleBinding
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username $NAMESPACE-user
-```
-
-## Add user to development group
-```bash
-aws iam list-groups-for-user --user rbac
-export GROUP_NAME=(terraform output -raw development-group-name)
-aws iam add-user-to-group --group-name $GROUP_NAME --user-name rbac
-aws iam list-groups-for-user --user rbac
-```
-
-### Namespace: something
-```bash
-export NAMESPACE=something
-export CLUSTER_NAME=(terraform output -raw cluster_name)
-
-cd stacks/cluster && helmfile --selector name=rbac-something sync && cd -
-
-export ROLE_ARN=(terraform output -raw something-role-arn)
-# $NAMESPACE-user has to match the user specified in the RoleBinding
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username $NAMESPACE-user
-```
-
-## Add user to something group
-```bash
-aws iam list-groups-for-user --user rbac
-export GROUP_NAME=(terraform output -raw something-group-name)
-aws iam add-user-to-group --group-name $GROUP_NAME --user-name rbac
-aws iam list-groups-for-user --user rbac
-```
-
-### Admin access
-```bash
-# Group, role and policy is created for admins just like for normal users but the admin role is associated with the existing user "admin" and the group "system:masters"
-export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ADMIN_ROLE_ARN --username admin --group system:masters
 ```
 
 ## Retrieve kubectl config for development namespace
 ```bash
 export CLUSTER_NAME=(terraform output -raw cluster_name)
 export REGION=(terraform output -raw region)
+export ROLE_ARN=(terraform output -raw development-role-arn)
+
 aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME --profile dhis-rbac --kubeconfig ./eks.yaml
 #eksctl utils write-kubeconfig $CLUSTER_NAME --profile dhis-rbac --region $REGION --kubeconfig ./eks.yaml
 
@@ -121,18 +61,12 @@ k --kubeconfig ./eks.yaml get pods --namespace development
 k --kubeconfig ./eks.yaml get pods --namespace default
 ```
 
-## Add user to admin group
-```bash
-aws iam list-groups-for-user --user rbac
-export ADMIN_GROUP_NAME=(terraform output -raw admin-group-name)
-aws iam add-user-to-group --group-name $ADMIN_GROUP_NAME --user-name rbac
-aws iam list-groups-for-user --user rbac
-```
-
 ## Retrieve kubectl config as admin user
 ```bash
 export CLUSTER_NAME=(terraform output -raw cluster_name)
 export REGION=(terraform output -raw region)
+export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
+
 aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME --profile dhis-rbac --kubeconfig ./eks-admin.yaml
 #eksctl utils write-kubeconfig $CLUSTER_NAME --profile dhis-rbac --region $REGION --kubeconfig ./eks-admin.yaml
 
