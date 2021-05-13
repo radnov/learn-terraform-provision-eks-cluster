@@ -1,3 +1,27 @@
+locals {
+  admin_role = [
+    {
+      rolearn = module.rbac-admin.role-arn
+      username = "admin"
+      groups = [
+        "system:masters"
+      ]
+    }
+  ]
+
+  namespace_roles = [
+    {
+      rolearn = module.rbac-development.role-arn
+      username = "development-user"
+      groups = [
+        module.rbac-development.group-name
+      ]
+    }
+  ]
+
+  map_roles = concat(local.admin_role, local.namespace_roles)
+}
+
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
   cluster_name = var.cluster_name
@@ -11,6 +35,8 @@ module "eks" {
   }
 
   vpc_id = module.vpc.vpc_id
+
+  map_roles = local.map_roles
 
   workers_group_defaults = {
     root_volume_type = "gp2"
