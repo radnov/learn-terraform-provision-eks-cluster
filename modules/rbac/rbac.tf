@@ -1,6 +1,7 @@
 
 variable "cluster" {}
 variable "namespace" {}
+variable "users" {}
 
 locals {
   name = "${var.cluster}-${var.namespace}"
@@ -63,6 +64,12 @@ resource "aws_iam_group_policy" "cluster" {
 
 resource "aws_iam_group" "rbac" {
   name = local.name
+}
+
+resource "aws_iam_group_membership" "rbac" {
+  name = local.name
+  users = var.users
+  group = aws_iam_group.rbac.name
 }
 
 output "role-arn" {

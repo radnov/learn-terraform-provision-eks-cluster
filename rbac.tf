@@ -2,6 +2,7 @@ module "rbac-admin" {
   source = "./modules/rbac"
   cluster = var.cluster_name
   namespace = "admin"
+  users = var.admin-users
 }
 
 output "admin-role-arn" {
@@ -12,18 +13,13 @@ output "admin-group-name" {
   value = module.rbac-admin.group-name
 }
 
-resource "aws_iam_group_membership" "admin-group-members" {
-  name = "admin-group-membership"
-  users = var.admin-users
-  group = module.rbac-admin.group-name
-}
-
 // ======================================================================
 
 module "rbac-development" {
   source = "./modules/rbac"
   cluster = var.cluster_name
   namespace = "development"
+  users = var.development-users
 }
 
 output "development-role-arn" {
@@ -40,6 +36,7 @@ module "rbac-something" {
   source = "./modules/rbac"
   cluster = var.cluster_name
   namespace = "something"
+  users = []
 }
 
 output "something-role-arn" {

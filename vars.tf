@@ -14,3 +14,10 @@ variable "admin-users" {
     "andreas"
   ]
 }
+
+variable "development-users" {
+  default = [
+    "rbac",
+    "phil"
+  ]
+}
