@@ -7,3 +7,10 @@ variable "cluster_name" {
   default = "dhis-poc"
   description = "EKS Cluster name"
 }
+
+variable "admin-users" {
+  default = [
+    "radoslav",
+    "andreas"
+  ]
+}

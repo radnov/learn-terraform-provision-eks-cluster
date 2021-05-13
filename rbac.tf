@@ -12,6 +12,12 @@ output "admin-group-name" {
   value = module.rbac-admin.group-name
 }
 
+resource "aws_iam_group_membership" "admin-group-members" {
+  name = "admin-group-membership"
+  users = var.admin-users
+  group = module.rbac-admin.group-name
+}
+
 // ======================================================================
 
 module "rbac-development" {
