@@ -1,0 +1,4 @@
+releases:
+  - name: rbac-{{ requiredEnv "NAMESPACE" }}
+    namespace: "{{ requiredEnv "NAMESPACE" }}"
+    chart: ../../../helm/rbac

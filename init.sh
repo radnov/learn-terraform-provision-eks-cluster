@@ -18,3 +18,12 @@ aws s3api put-bucket-versioning --bucket $bucket --versioning-configuration Stat
 aws s3api put-bucket-policy --bucket $bucket --policy file://bucket-policy.json
 
 terraform init
+
+time terraform apply -auto-approve
+terraform output -raw kubectl_config > ~/.kube/dhis.yaml
+export KUBECONFIG="$HOME/.kube/dhis.yaml"
+kubectl get nodes
+
+# shellcheck disable=SC2164
+#cd stacks/cluster/ingress && helmfile sync && cd -
+terraform output -json namespaces | jq -c -r '.[]' | xargs -I '{}' sh -c 'export NAMESPACE="{}" && cd stacks/cluster/rbac && helmfile sync && cd -'

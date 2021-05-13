@@ -3,7 +3,7 @@
 
 provider "registry.terraform.io/hashicorp/aws" {
   version     = "3.39.0"
-  constraints = ">= 2.68.0, >= 3.22.0, >= 3.35.0"
+  constraints = ">= 2.68.0, >= 3.20.0, >= 3.22.0, >= 3.35.0"
   hashes = [
     "h1:fjlp3Pd3QsTLghNm7TUh/KnEMM2D3tLb7jsDLs8oWUE=",
     "h1:goOMfGE4SjLps+hpxJFEM/pZFiNgvi6BMG8/w86+f6k=",
@@ -42,7 +42,7 @@ provider "registry.terraform.io/hashicorp/cloudinit" {
 
 provider "registry.terraform.io/hashicorp/kubernetes" {
   version     = "2.1.0"
-  constraints = ">= 1.11.1"
+  constraints = ">= 1.11.1, >= 2.0.1"
   hashes = [
     "h1:8RC6upWV190+kE3+rYI4HuSouBUOfOXwV5GvIEXW4nk=",
     "h1:L/3XfqLQ4bS1PjH/FksJPm+MYIOxCwn97ozbfSwg/VQ=",

@@ -8,16 +8,17 @@ variable "cluster_name" {
   description = "EKS Cluster name"
 }
 
-variable "admin-users" {
-  default = [
-    "radoslav",
-    "andreas"
-  ]
-}
+variable "namespace-users" {
+  type = map(list(string))
 
-variable "development-users" {
-  default = [
-    "rbac",
-    "phil"
-  ]
+  default = {
+    admin = [
+      "radoslav",
+      "andreas"
+    ],
+    development = [
+      "rbac",
+      "phil"
+    ]
+  }
 }

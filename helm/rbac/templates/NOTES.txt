@@ -1,1 +1,1 @@
-Role and RoleBinding applied to {{ .Release.Namespace }}
+Role and RoleBinding applied to {{ .Release.Namespace }} namespace

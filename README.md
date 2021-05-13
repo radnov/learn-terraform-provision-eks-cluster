@@ -47,10 +47,9 @@ cd stacks/cluster && helmfile --selector name=rbac-development sync && cd -
 ```bash
 export CLUSTER_NAME=(terraform output -raw cluster_name)
 export REGION=(terraform output -raw region)
-export ROLE_ARN=(terraform output -raw development-role-arn)
+export ROLE_ARN=(terraform output -json group-to-role-arns | jq -r '."dhis-poc-development"')
 
 aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME --profile dhis-rbac --kubeconfig ./eks.yaml
-#eksctl utils write-kubeconfig $CLUSTER_NAME --profile dhis-rbac --region $REGION --kubeconfig ./eks.yaml
 
 echo "[profile dev]
 role_arn=$ROLE_ARN
@@ -65,16 +64,15 @@ k --kubeconfig ./eks.yaml get pods --namespace default
 ```bash
 export CLUSTER_NAME=(terraform output -raw cluster_name)
 export REGION=(terraform output -raw region)
-export ADMIN_ROLE_ARN=(terraform output -raw admin-role-arn)
+export ROLE_ARN=(terraform output -json group-to-role-arns | jq -r '."dhis-poc-admin"')
 
 aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME --profile dhis-rbac --kubeconfig ./eks-admin.yaml
-#eksctl utils write-kubeconfig $CLUSTER_NAME --profile dhis-rbac --region $REGION --kubeconfig ./eks-admin.yaml
 
 echo "[profile admin]
 role_arn=$ADMIN_ROLE_ARN
 source_profile=dhis-rbac" >> ~/.aws/config
 
-# Update env.AWS_PROFILE in ./eks.yaml to "admin" ... Or to whatever is defined in ~/.aws/config 
+# Update env.AWS_PROFILE in ./eks-admin.yaml to "admin" ... Or to whatever is defined in ~/.aws/config 
 k --kubeconfig ./eks-admin.yaml get pods --namespace default
 ```
 
@@ -133,16 +131,6 @@ cd -
 
 # Teardown
 ```bash
-aws iam list-groups-for-user --user rbac
-
-export GROUP_NAME=(terraform output -raw admin-group-name)
-aws iam remove-user-from-group --group-name $GROUP_NAME --user-name rbac
-
-export GROUP_NAME=(terraform output -raw development-group-name)
-aws iam remove-user-from-group --group-name $GROUP_NAME --user-name rbac
-
-aws iam list-groups-for-user --user rbac
-
 time terraform destroy -auto-approve
 ```
 
