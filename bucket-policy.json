@@ -7,7 +7,6 @@
       "NotPrincipal": {
         "AWS": [
           "arn:aws:iam::767224633206:user/radoslav",
-          "arn:aws:iam::767224633206:user/phil",
           "arn:aws:iam::767224633206:user/andreas"
         ]
       },
