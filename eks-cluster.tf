@@ -64,12 +64,7 @@ module "eks" {
 
 // TODO: This is probably not the way we want to install the cluster stack
 // Possible do it this way, but just call some scripts... install-stack.sh, uninstall-stack.sh
-resource "aws_security_group" "dummy" {
-  name_prefix = "TODO"
-  description = "Dummy resource used by terraform to install/uninstall the cluster stack for ${var.cluster_name}"
-
-  vpc_id = module.vpc.vpc_id
-
+resource "null_resource" "dummy" {
   depends_on = [
     module.eks,
   ]
