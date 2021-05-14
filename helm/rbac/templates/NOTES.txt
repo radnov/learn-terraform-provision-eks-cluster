@@ -1,1 +1,1 @@
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ROLE_ARN --username {{ .Release.Namespace }}-user
+Role and RoleBinding applied to {{ .Release.Namespace }} namespace

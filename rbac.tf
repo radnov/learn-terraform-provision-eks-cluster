@@ -1,45 +1,16 @@
-module "rbac-admin" {
+module "rbac-namespace" {
+  for_each = var.namespace-users
+
   source = "./modules/rbac"
   cluster = var.cluster_name
-  namespace = "admin"
+  namespace = each.key
+  users = each.value
 }
 
-output "admin-role-arn" {
-  value = module.rbac-admin.role-arn
+output "group-to-role-arns" {
+  value = {for key in sort(keys(var.namespace-users)) : module.rbac-namespace[key].group-name => module.rbac-namespace[key].role-arn}
 }
 
-output "admin-group-name" {
-  value = module.rbac-admin.group-name
-}
-
-// ======================================================================
-
-module "rbac-development" {
-  source = "./modules/rbac"
-  cluster = var.cluster_name
-  namespace = "development"
-}
-
-output "development-role-arn" {
-  value = module.rbac-development.role-arn
-}
-
-output "development-group-name" {
-  value = module.rbac-development.group-name
-}
-
-// ======================================================================
-
-module "rbac-something" {
-  source = "./modules/rbac"
-  cluster = var.cluster_name
-  namespace = "something"
-}
-
-output "something-role-arn" {
-  value = module.rbac-something.role-arn
-}
-
-output "something-group-name" {
-  value = module.rbac-something.group-name
+output "namespaces" {
+  value = [for key in keys(var.namespace-users): key if key != "admin"]
 }
