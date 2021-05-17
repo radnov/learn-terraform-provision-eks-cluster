@@ -8,6 +8,11 @@ variable "cluster_name" {
   description = "EKS Cluster name"
 }
 
+variable "profile" {
+  default = "default"
+  description = "AWS profile for authenticating with the cluster"
+}
+
 variable "namespace-users" {
   type = map(list(string))
 

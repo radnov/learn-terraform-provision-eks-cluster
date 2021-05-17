@@ -20,7 +20,6 @@ resource "aws_iam_role" "rbac" {
         Effect = "Allow"
         Sid = ""
         Principal = {
-          // TODO: Is this enough? Is this only root or is this role assumable by all users in the account?
           AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
         }
       },
