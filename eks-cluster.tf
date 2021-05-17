@@ -87,21 +87,6 @@ resource "null_resource" "dummy" {
   }
 }
 
-/* TODO: Bug! Should be reported... https://github.com/hashicorp/terraform-provider-random/issues
-resource "random_string" "dummy" {
-  length = 0
-
-  depends_on = [
-    module.eks,
-  ]
-
-  provisioner "local-exec" {
-    when = destroy
-    command = "helmfile --selector name=ingress-nginx destroy"
-  }
-}
-*/
-
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
