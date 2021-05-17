@@ -63,10 +63,11 @@ module "eks" {
 
   /* TODO: We should be able to pass a profile when authenticating with the EKS cluster
   (Shouldn't this work? https://github.com/hashicorp/learn-terraform-provision-eks-cluster/issues/38)
-  */
+
   kubeconfig_aws_authenticator_env_variables = {
     AWS_PROFILE = var.profile
   }
+  */
 }
 
 // TODO: This is probably not the way we want to install the cluster stack
