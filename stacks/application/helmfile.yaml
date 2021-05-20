@@ -55,12 +55,14 @@ releases:
   - name: whoami-go
     namespace: whoami
     chart: tons/whoami-go
-    verify: true
+    version: 0.3.0
+#    verify: true
     values:
       - replicaCount: 2
       - ingress:
           enabled: true
-          hostname: whoami-go-{{ requiredEnv "LB_IP" }}.nip.io
+          hostname: whoami-go.c.dhis2.org
+          certIssuer: cert-issuer-prod
 
 repositories:
   - name: bitnami
