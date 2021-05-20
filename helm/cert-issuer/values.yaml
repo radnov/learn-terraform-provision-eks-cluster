@@ -1,0 +1,8 @@
+
+email: ""
+
+ingressClass: nginx
+
+server:
+  prod: https://acme-v02.api.letsencrypt.org/directory
+  staging: https://acme-staging-v02.api.letsencrypt.org/directory

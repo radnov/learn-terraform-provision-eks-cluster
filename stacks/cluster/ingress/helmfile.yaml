@@ -2,7 +2,23 @@ releases:
   - name: ingress-nginx
     namespace: ingress
     chart: ingress-nginx/ingress-nginx
+    version: 3.31.0
+
+  - name: cert-manager
+    namespace: ingress
+    chart: jetstack/cert-manager
+    version: 1.3.1
+    values:
+      - installCRDs: true
+
+  - name: cert-issuer
+    namespace: ingress
+    chart: ../../../helm/cert-issuer
+    values:
+      - email: andreas@dhis2.org
 
 repositories:
   - name: ingress-nginx
     url: https://kubernetes.github.io/ingress-nginx
+  - name: jetstack
+    url: https://charts.jetstack.io
